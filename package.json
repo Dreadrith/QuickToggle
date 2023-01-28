@@ -1,0 +1,17 @@
+{
+  "name": "com.dreadscripts.tool.quicktoggle",
+  "displayName": "DreadTools - QuickToggle",
+  "version": "1.5.1",
+  "author": {
+    "name": "Dreadrith",
+    "email": "dreadscripts@gmail.com",
+    "url": "https://github.com/Dreadrith"
+  },
+  "description": "Quick Toggle simplifies the creation of simple clips and toggles.",
+  "gitDependencies": {},
+  "vpmDependencies": {},
+  "legacyFolders": {},
+  "legacyFiles": {},
+  "localPath": "C:\\My Drive\\Unity Projects\\VPM Test\\Packages\\com.dreadscripts.quicktoggle",
+  "type": "tool"
+}

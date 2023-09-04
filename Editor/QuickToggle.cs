@@ -110,6 +110,9 @@ namespace DreadScripts
         private static bool createOpposite = true;
         private static bool useAllShapes;
         private static BlendClipMode shapeClipMode = BlendClipMode.SingleClip;
+        private static string postfixClipA = "Enable";
+        private static string postfixClipB = "Disable";
+        private static string menuTitle = "";
 
         #endregion
 
@@ -165,7 +168,7 @@ namespace DreadScripts
                     }
                 }
 
-                clipName += " Enable";
+                menuTitle = clipName;
             }
 
             CheckIfValid();
@@ -266,7 +269,15 @@ namespace DreadScripts
                     using (new GUILayout.VerticalScope())
                     {
                         DoToggle(ref createOpposite, Styles.createOppositeContent);
-                        using (new GUILayout.VerticalScope()) clipName = EditorGUILayout.TextField("Clip Name", clipName);
+
+                        clipName = EditorGUILayout.TextField("Clip Name", clipName);
+
+                        using (new EditorGUI.DisabledScope(!autoName))
+                        {
+                            postfixClipA = EditorGUILayout.TextField("Clip A Postfix", postfixClipA);
+                            postfixClipB = EditorGUILayout.TextField("Clip B Postfix", postfixClipB);
+                        }
+
                         using (new EditorGUI.DisabledScope(creatingToggle))
                             shapeClipMode = (BlendClipMode) EditorGUILayout.EnumPopup("Clip Mode", shapeClipMode);
                     }
@@ -299,7 +310,10 @@ namespace DreadScripts
                             vrcAddFlags = (VRCToggleFlags) EditorGUILayout.EnumFlagsField("Add To", vrcAddFlags);
 
                         using (new EditorGUI.DisabledScope(!vrcAddFlags.HasFlag(VRCToggleFlags.Menu)))
-                            menu = (VRCExpressionsMenu) EditorGUILayout.ObjectField("Target Menu", menu, typeof(VRCExpressionsMenu), false);
+                        {
+                            menu = (VRCExpressionsMenu)EditorGUILayout.ObjectField("Target Menu", menu, typeof(VRCExpressionsMenu), false);
+                            menuTitle = EditorGUILayout.TextField("Menu Title", ((menuTitle == "") ? parameter : menuTitle));
+                        }
                     }
 
                     using (new GUILayout.VerticalScope())
@@ -517,7 +531,9 @@ namespace DreadScripts
                 newClip.SetCurve(b.path, b.type, b.propertyName, new AnimationCurve() {keys = new Keyframe[] {new Keyframe(0, myValue), new Keyframe(frameSpan / 60f, myValue)}});
             }
 
-            string oppPath = AssetDatabase.GenerateUniqueAssetPath(clipPath.Substring(0, clipPath.Length - 5) + " Opp.anim");
+            string postFix = (postfixClipB != "" && autoName) ? " " + postfixClipB : "";
+            string oppPath = Regex.Replace(clipPath, " " + postfixClipA.ToLower(), postFix, RegexOptions.IgnoreCase);
+            oppPath = AssetDatabase.GenerateUniqueAssetPath(oppPath);
             SaveClip(newClip, oppPath);
             return newClip;
         }
@@ -525,7 +541,8 @@ namespace DreadScripts
         private void SaveClip(AnimationClip c, string suffix, bool isBlendShapeClip)
         {
             AnimationClip onClip = c, offClip = null;
-            string path = AssetDatabase.GenerateUniqueAssetPath($"{folderPath}/{clipName}{suffix}.anim");
+            string postFix = (postfixClipA != "" && autoName) ? " " + postfixClipA : "";
+            string path = AssetDatabase.GenerateUniqueAssetPath($"{folderPath}/{clipName}{suffix}{postFix}.anim");
             SaveClip(c, path);
 
             if (createOpposite) offClip = CreateOppositeClip(c, path, isBlendShapeClip);
@@ -571,8 +588,8 @@ namespace DreadScripts
                     m.entryPosition = new Vector3(0, 80);
 
                     AnimatorState idleState = m.AddState("Idle", new Vector3(-20, 140));
-                    AnimatorState onState = m.AddState($"{parameter} On", new Vector3(-140, 240));
-                    AnimatorState offState = m.AddState($"{parameter} Off", new Vector3(100, 240));
+                    AnimatorState onState = m.AddState($"Active", new Vector3(-140, 240));
+                    AnimatorState offState = m.AddState($"Disabled", new Vector3(100, 240));
                     idleState.writeDefaultValues = onState.writeDefaultValues = offState.writeDefaultValues = useWriteDefaults;
 
                     idleState.writeDefaultValues = onState.writeDefaultValues = offState.writeDefaultValues;
@@ -610,6 +627,7 @@ namespace DreadScripts
                 elem.FindPropertyRelative("valueType").enumValueIndex = 2;
                 elem.FindPropertyRelative("saved").boolValue = true;
                 elem.FindPropertyRelative("defaultValue").floatValue = 0;
+                elem.FindPropertyRelative("networkSynced").boolValue = true;
 
                 so.ApplyModifiedPropertiesWithoutUndo();
             }
@@ -621,7 +639,7 @@ namespace DreadScripts
 
                 var newControl = new VRCExpressionsMenu.Control
                 {
-                    name = parameter,
+                    name = menuTitle,
                     parameter = new VRCExpressionsMenu.Control.Parameter() { name = parameter },
                     type = VRCExpressionsMenu.Control.ControlType.Toggle,
                     value = 1
@@ -670,26 +688,30 @@ namespace DreadScripts
                     if (t.active)
                     {
                         enabled = true;
-                        statusName = " Enable";
+                        statusName = "Enable";
+                        postfixClipA = "Enable";
+                        postfixClipB = "Disable";
                     }
                     else
                     {
                         disabled = true;
-                        statusName = " Disable";
+                        statusName = "Disable";
+                        postfixClipB = "Enable";
+                        postfixClipA = "Disable";
                     }
 
                 if (enabled && disabled)
                 {
-                    statusName = " Toggle";
+                    statusName = "Toggle";
                     break;
                 }
             }
 
-            if (clipName == (clipName = Regex.Replace(clipName, " enable", statusName, RegexOptions.IgnoreCase)))
+            if (clipName == (clipName = Regex.Replace(clipName, postfixClipA.ToLower(), postfixClipB, RegexOptions.IgnoreCase)))
             {
-                if (clipName == (clipName = Regex.Replace(clipName, " disable", statusName, RegexOptions.IgnoreCase)))
+                if (clipName == (clipName = Regex.Replace(clipName, postfixClipB.ToLower(), postfixClipA, RegexOptions.IgnoreCase)))
                 {
-                    clipName = Regex.Replace(clipName, " toggle", statusName, RegexOptions.IgnoreCase);
+                    clipName = Regex.Replace(clipName, "toggle", statusName, RegexOptions.IgnoreCase);
                 }
             }
 

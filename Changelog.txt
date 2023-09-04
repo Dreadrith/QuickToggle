@@ -1,3 +1,9 @@
+v1.5.2
+------
+- [Bugfix] Newly created parameters always have syncing enabled
+- [Feature] Can now specify postfixes for AutoName feature
+- [Feature] Can now specify Menu Item name seperate from Parameter name
+
 v1.5.1
 ------
 - [Feature] Added 'Write Defaults' Option for making a toggle

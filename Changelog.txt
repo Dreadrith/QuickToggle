@@ -1,3 +1,7 @@
+v1.6.1
+------
+- [Improvement] Updated VPM Format
+
 v1.5.1
 ------
 - [Feature] Added 'Write Defaults' Option for making a toggle

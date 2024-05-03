@@ -10,12 +10,7 @@ using VRC.SDK3.Avatars.Components;
 using VRC.SDK3.Avatars.ScriptableObjects;
 using Object = UnityEngine.Object;
 
-//Made by Dreadrith#3238
-//Server: https://discord.gg/ZsPfrGn
-//Github: https://github.com/Dreadrith/DreadScripts
-//Gumroad: https://gumroad.com/dreadrith
-
-namespace DreadScripts
+namespace DreadScripts.QuickToggle
 {
     public class QuickToggle : EditorWindow
     {

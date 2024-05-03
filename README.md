@@ -1,5 +1,7 @@
-# Toggle Mode
-Easily create clips that Enable/Disable GameObjects or their components.  
+# Quick Toggle
+Quick Toggle simplifies the creation of simple clips and toggles.
+
+### [Download From Here](https://vpm.dreadscripts.com/)
 
 **Quick Steps:**  
 1. Set the Root
@@ -34,3 +36,6 @@ Easily create clips that modify the Blendshapes of skinned mesh renderers.
 	- Separate Blendshapes: Makes an animation clip for each used Blendshape (Value > 0).
 
 - (Blendshape) Use all Blendshapes: Uses all the Blendshape values in the target Renderers in the created clips.
+
+### Thank You
+If you enjoy Quick Toggle, please consider [supporting me ♡](https://ko-fi.com/Dreadrith)!

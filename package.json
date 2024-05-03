@@ -1,8 +1,8 @@
 {
   "name": "com.dreadscripts.quicktoggle",
-  "displayName": "DreadTools - QuickToggle",
-  "version": "1.6.1",
-  "description": "Simple tool to reset the pose of a humanoid animator.",
+  "displayName": "DreadScripts - QuickToggle",
+  "version": "1.6.0",
+  "description": "Quick Toggle simplifies the creation of simple clips and toggles.",
   "gitDependencies": {},
   "vpmDependencies": {},
   "author": {

@@ -1,3 +1,8 @@
+v1.6.1
+------
+- [Fix] Added assembly definition which allows the package to actually compile
+- [Misc] Defined minimal unity version
+
 v1.6.0
 ------
 - [Improvement] Updated VPM Format
